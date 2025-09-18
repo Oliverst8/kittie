@@ -79,6 +79,12 @@ pub enum ConfigSubcommand {
 /// Submit all found solutions to a contest
 #[derive(Args, Debug)]
 pub struct ContestArgs {
+    /// The ID of the contest to submit to from Kattis.
+    ///
+    /// You can find the id in the URL of the contest page on kattis:
+    /// open.kattis.com/contests/<CONTEST ID>
+    pub contest_id: String,
+
     /// Bypass the confirmation prompt by saying yes in advance.
     #[arg(short, long, default_value_t = false)]
     pub yes: bool,
