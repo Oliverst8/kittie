@@ -20,7 +20,8 @@ impl Deref for KattisClient {
         &self.client
     }
 }
-
+//TODO stop using static bool for this!
+static mut LOGGED_IN: bool = false;
 impl KattisClient {
     pub fn new() -> crate::Result<Self> {
         let client = Client::builder()
@@ -33,6 +34,9 @@ impl KattisClient {
     }
 
     pub async fn login(&self, app: &App) -> crate::Result<()> {
+        if unsafe { LOGGED_IN } {
+            return Ok(());
+        }
         let kattisrc = app.config.try_kattisrc()?;
 
         let form = Form::new()
@@ -60,7 +64,7 @@ impl KattisClient {
                 res.status()
             );
         }
-
+        unsafe { LOGGED_IN = true };
         Ok(())
     }
 }
