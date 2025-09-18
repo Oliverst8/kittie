@@ -37,6 +37,7 @@
             cargo
             pkg-config
             openssl
+            rust-analyzer
           ];
 
           PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
