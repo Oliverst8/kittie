@@ -21,6 +21,7 @@ pub struct KittyArgs {
 #[derive(Subcommand, Debug)]
 pub enum KittySubcommand {
     Config(ConfigArgs),
+    Contest(ContestArgs),
     Debug(DebugArgs),
     Get(GetArgs),
     Open(OpenArgs),
@@ -73,6 +74,14 @@ pub enum ConfigSubcommand {
 
     /// Shows where the kitty config directory is or should be located
     Location,
+}
+
+/// Submit all found solutions to a contest
+#[derive(Args, Debug)]
+pub struct ContestArgs {
+    /// Bypass the confirmation prompt by saying yes in advance.
+    #[arg(short, long, default_value_t = false)]
+    pub yes: bool,
 }
 
 /// Fetches a problem from Kattis by creating a solution folder of the same name
