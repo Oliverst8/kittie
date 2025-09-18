@@ -3,6 +3,7 @@ use std::ops::Deref;
 use eyre::Context;
 use reqwest::{multipart::Form, Client, StatusCode};
 use secrecy::ExposeSecret;
+use tokio::sync::RwLock;
 
 use crate::App;
 
@@ -11,6 +12,7 @@ pub const USER_AGENT: &str = env!("CARGO_PKG_NAME");
 #[derive(Debug)]
 pub struct KattisClient {
     pub client: Client,
+    logged_in: RwLock<bool>,
 }
 
 impl Deref for KattisClient {
@@ -20,8 +22,6 @@ impl Deref for KattisClient {
         &self.client
     }
 }
-//TODO stop using static bool for this!
-static mut LOGGED_IN: bool = false;
 impl KattisClient {
     pub fn new() -> crate::Result<Self> {
         let client = Client::builder()
@@ -30,13 +30,26 @@ impl KattisClient {
             .build()
             .wrap_err("Failed to instantiate HTTP client")?;
 
-        Ok(Self { client })
+        Ok(Self {
+            client,
+            logged_in: RwLock::new(false),
+        })
     }
 
     pub async fn login(&self, app: &App) -> crate::Result<()> {
-        if unsafe { LOGGED_IN } {
+        {
+            let read = self.logged_in.read().await;
+            if *read {
+                return Ok(());
+            }
+        }
+
+        let mut write = self.logged_in.write().await;
+
+        if *write {
             return Ok(());
         }
+
         let kattisrc = app.config.try_kattisrc()?;
 
         let form = Form::new()
@@ -64,7 +77,7 @@ impl KattisClient {
                 res.status()
             );
         }
-        unsafe { LOGGED_IN = true };
+        *write = true;
         Ok(())
     }
 }
