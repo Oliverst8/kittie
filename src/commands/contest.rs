@@ -36,7 +36,6 @@ pub async fn get_problem_ids(app: &App, contest_id: String) -> crate::Result<Vec
 
     let problems = get_problem_ids_from_html(&res_body).await?;
 
-    //print!("{:?}", res_body);
     Ok(problems)
 }
 
