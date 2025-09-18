@@ -85,6 +85,10 @@ pub struct ContestArgs {
     /// open.kattis.com/contests/<CONTEST ID>
     pub contest_id: String,
 
+    /// The path to the folder containing your solutions
+    #[arg(short, long, default_value = ".")]
+    pub path: PathBuf,
+
     /// Bypass the confirmation prompt by saying yes in advance.
     #[arg(short, long, default_value_t = false)]
     pub yes: bool,
